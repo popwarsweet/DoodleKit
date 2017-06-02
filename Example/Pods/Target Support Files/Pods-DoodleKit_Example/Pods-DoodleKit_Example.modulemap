@@ -1,0 +1,6 @@
+framework module Pods_DoodleKit_Example {
+  umbrella header "Pods-DoodleKit_Example-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -1,0 +1,6 @@
+framework module DoodleKit {
+  umbrella header "DoodleKit-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -1,0 +1,16 @@
+PODS:
+  - DoodleKit (0.1.0)
+
+DEPENDENCIES:
+  - DoodleKit (from `../`)
+
+EXTERNAL SOURCES:
+  DoodleKit:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  DoodleKit: 12dc16b85b745bdc47ce28c79f32564f2755f268
+
+PODFILE CHECKSUM: 006743615bef56df575acc520b7637d95c7f8b02
+
+COCOAPODS: 1.2.0
