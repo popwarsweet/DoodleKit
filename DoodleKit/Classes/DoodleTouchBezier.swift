@@ -10,44 +10,29 @@ import Foundation
 
 internal struct DoodleTouchBezier {
     fileprivate static let drawStepsPerBezier = 300
-    /**
-     *  The start point of the cubic bezier path.
-     */
+    
+    /// The start point of the cubic bezier path.
     var startPoint: CGPoint
     
-    /**
-     *  The end point of the cubic bezier path.
-     */
+    /// The end point of the cubic bezier path.
     var endPoint: CGPoint
     
-    /**
-     *  The first control point of the cubic bezier path.
-     */
+    /// The first control point of the cubic bezier path.
     var controlPoint1: CGPoint
     
-    /**
-     *  The second control point of the cubic bezier path.
-     */
+    /// The second control point of the cubic bezier path.
     var controlPoint2: CGPoint
     
-    /**
-     *  The starting width of the cubic bezier path.
-     */
+    /// The starting width of the cubic bezier path.
     var startWidth: CGFloat
     
-    /**
-     *  The ending width of the cubic bezier path.
-     */
+    /// The ending width of the cubic bezier path.
     var endWidth:  CGFloat
     
-    /**
-     *  The stroke color of the cubic bezier path.
-     */
+    /// The stroke color of the cubic bezier path.
     var strokeColor: UIColor
     
-    /**
-     *  YES if the line is a constant width, NO if variable width.
-     */
+    /// YES if the line is a constant width, NO if variable width.
     var isConstantWidth: Bool
 }
 
@@ -85,12 +70,8 @@ extension DoodleTouchBezier: DrawablePath {
                 y += ttt * endPoint.y
                 
                 let pointWidth = startWidth + (ttt * widthDelta)
-                DoodleTouchBezier.drawPoint(CGPoint(x: x, y: y), withWidth: pointWidth, inContext: context)
+                DoodleTouchPoint.drawPoint(CGPoint(x: x, y: y), withWidth: pointWidth, inContext: context)
             }
         }
-    }
-    
-    static func drawPoint(_ point: CGPoint, withWidth width: CGFloat, inContext context: CGContext) {
-        context.fillEllipse(in: CGRect(x: point.x, y: point.y, width: 0, height: 0).insetBy(dx: -width / 2, dy: -width / 2))
     }
 }
