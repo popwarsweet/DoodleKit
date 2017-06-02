@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'DoodleKit_Example' do
+  pod 'DoodleKit', :path => '../'
+
+  target 'DoodleKit_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
