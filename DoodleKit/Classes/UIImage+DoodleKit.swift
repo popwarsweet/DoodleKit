@@ -17,13 +17,18 @@ internal extension UIImage {
     ///   - size: The size the image should be.
     /// - Returns: An image of the given color and size.
     internal class func imageWithColor(_ color: UIColor, ofSize size: CGSize) -> UIImage? {
+        // Create image context.
         UIGraphicsBeginImageContextWithOptions(size, false, 0)
         guard let currentContext = UIGraphicsGetCurrentContext() else {
             assertionFailure("Unable to grab image context.")
             return nil
         }
+        
+        // Fill path.
         color.setFill()
         currentContext.fill(CGRect(origin: .zero, size: size))
+        
+        // Return image.
         defer { UIGraphicsEndImageContext() }
         return UIGraphicsGetImageFromCurrentImageContext()
     }
