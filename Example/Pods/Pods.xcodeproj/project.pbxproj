@@ -14,6 +14,7 @@
 		27477FC01EE20BE3009E4D92 /* DoodleTouchBezier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27477FBF1EE20BE3009E4D92 /* DoodleTouchBezier.swift */; };
 		27477FC21EE21934009E4D92 /* DoodleDrawingContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27477FC11EE21934009E4D92 /* DoodleDrawingContainerView.swift */; };
 		27477FC41EE5922B009E4D92 /* DoodleDrawView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27477FC31EE5922B009E4D92 /* DoodleDrawView.swift */; };
+		27477FC61EE5E755009E4D92 /* DoodleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27477FC51EE5E755009E4D92 /* DoodleViewController.swift */; };
 		3326E2AEA9FFDCB76C16E00FD7BA03C4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6604A7D69453B4569E4E4827FB9155A9 /* Foundation.framework */; };
 		348871280351786447A29E8329B5709C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6604A7D69453B4569E4E4827FB9155A9 /* Foundation.framework */; };
 		41DD90BE56F8C898E2A2738F0A7C571B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6604A7D69453B4569E4E4827FB9155A9 /* Foundation.framework */; };
@@ -48,6 +49,7 @@
 		27477FBF1EE20BE3009E4D92 /* DoodleTouchBezier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoodleTouchBezier.swift; sourceTree = "<group>"; };
 		27477FC11EE21934009E4D92 /* DoodleDrawingContainerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoodleDrawingContainerView.swift; sourceTree = "<group>"; };
 		27477FC31EE5922B009E4D92 /* DoodleDrawView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoodleDrawView.swift; sourceTree = "<group>"; };
+		27477FC51EE5E755009E4D92 /* DoodleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoodleViewController.swift; sourceTree = "<group>"; };
 		30A9EBF7FBAAEC3D78A84567AB12B547 /* Pods-DoodleKit_Example-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-DoodleKit_Example-dummy.m"; sourceTree = "<group>"; };
 		35B12DC509AB979135D8C92CC0E3E6B3 /* Pods-DoodleKit_Example-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-DoodleKit_Example-acknowledgements.markdown"; sourceTree = "<group>"; };
 		40086CC2C4D154AECFC7F6EAD1C3505D /* Pods-DoodleKit_Tests-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-DoodleKit_Tests-frameworks.sh"; sourceTree = "<group>"; };
@@ -125,6 +127,7 @@
 				27477FBF1EE20BE3009E4D92 /* DoodleTouchBezier.swift */,
 				27477FC11EE21934009E4D92 /* DoodleDrawingContainerView.swift */,
 				27477FC31EE5922B009E4D92 /* DoodleDrawView.swift */,
+				27477FC51EE5E755009E4D92 /* DoodleViewController.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -371,6 +374,7 @@
 				27477FBA1EE1F432009E4D92 /* UIImage+DoodleKit.swift in Sources */,
 				27477FBE1EE1F996009E4D92 /* DoodleTouchPoint.swift in Sources */,
 				60FC80ABC583CC3451A9E0890EF3C40F /* DoodleKit-dummy.m in Sources */,
+				27477FC61EE5E755009E4D92 /* DoodleViewController.swift in Sources */,
 				27477FC01EE20BE3009E4D92 /* DoodleTouchBezier.swift in Sources */,
 				27477FC21EE21934009E4D92 /* DoodleDrawingContainerView.swift in Sources */,
 				27477FBC1EE1F95E009E4D92 /* DrawablePath.swift in Sources */,

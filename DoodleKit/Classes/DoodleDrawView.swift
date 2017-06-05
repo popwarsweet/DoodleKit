@@ -268,6 +268,11 @@ class DoodleDrawView: UIView {
     fileprivate func renderDrawing(withSize size: CGSize) -> UIImage? {
         return drawAllPathsOnImage(nil, withSize: size)
     }
+    
+    fileprivate func drawAllPaths() {
+        guard let context = UIGraphicsGetCurrentContext() else { return }
+        paths.forEach { $0.draw(inContext: context) }
+    }
 
     func draw(onImage image: UIImage) -> UIImage? {
         return drawAllPathsOnImage(image, withSize: image.size)
@@ -279,10 +284,5 @@ class DoodleDrawView: UIView {
         drawAllPaths()
         defer { UIGraphicsEndImageContext() }
         return UIGraphicsGetImageFromCurrentImageContext()
-    }
-
-    fileprivate func drawAllPaths() {
-        guard let context = UIGraphicsGetCurrentContext() else { return }
-        paths.forEach { $0.draw(inContext: context) }
     }
 }
