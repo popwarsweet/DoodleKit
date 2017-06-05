@@ -8,36 +8,47 @@
 
 import Foundation
 
-internal struct DoodleTouchBezier {
+internal class DoodleTouchBezier: DoodlePath {
     fileprivate static let drawStepsPerBezier = 300
     
+    /// Start time of first point of bezier path.
+    var timestamp: CFAbsoluteTime
+    
     /// The start point of the cubic bezier path.
-    var startPoint: CGPoint
+    var startPoint: CGPoint = .zero
     
     /// The end point of the cubic bezier path.
-    var endPoint: CGPoint
+    var endPoint: CGPoint = .zero
     
     /// The first control point of the cubic bezier path.
-    var controlPoint1: CGPoint
+    var controlPoint1: CGPoint = .zero
     
     /// The second control point of the cubic bezier path.
-    var controlPoint2: CGPoint
+    var controlPoint2: CGPoint = .zero
     
     /// The starting width of the cubic bezier path.
-    var startWidth: CGFloat
+    var startWidth: CGFloat = 10
     
     /// The ending width of the cubic bezier path.
-    var endWidth:  CGFloat
+    var endWidth:  CGFloat = 10
     
     /// The stroke color of the cubic bezier path.
-    var strokeColor: UIColor
+    var strokeColor: UIColor = .black
     
     /// YES if the line is a constant width, NO if variable width.
-    var isConstantWidth: Bool
-}
-
-extension DoodleTouchBezier: DrawablePath {
-    func draw(inContext context: CGContext) {
+    var isConstantWidth = false
+    
+    
+    // MARK: - Init
+    
+    init(timestamp: CFAbsoluteTime) {
+        self.timestamp = timestamp
+    }
+    
+    
+    // MARK: - DrawablePath
+    
+    override func draw(inContext context: CGContext) {
         if isConstantWidth {
             let bezierPath = UIBezierPath()
             bezierPath.move(to: startPoint)
@@ -73,5 +84,19 @@ extension DoodleTouchBezier: DrawablePath {
                 DoodleTouchPoint.drawPoint(CGPoint(x: x, y: y), withWidth: pointWidth, inContext: context)
             }
         }
+    }
+}
+
+extension DoodleTouchBezier {
+    static func ==(lhs: DoodleTouchBezier, rhs: DoodleTouchBezier) -> Bool {
+        return lhs.timestamp == rhs.timestamp
+            && lhs.startPoint == rhs.startPoint
+            && lhs.endPoint == rhs.endPoint
+            && lhs.controlPoint1 == rhs.controlPoint1
+            && lhs.controlPoint2 == rhs.controlPoint2
+            && lhs.startWidth == rhs.startWidth
+            && lhs.endWidth == rhs.endWidth
+            && lhs.strokeColor == rhs.strokeColor
+            && lhs.isConstantWidth == rhs.isConstantWidth
     }
 }
