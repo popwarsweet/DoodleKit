@@ -14,17 +14,17 @@ public protocol DoodleViewControllerDelegate: class {
     /// - Parameters:
     ///   - doodleViewController: The draw text view controller.
     ///   - isEditingText: `true` if entering edit (keyboard text entry) mode, `false` if exiting edit mode.
-    func doodleViewController(doodleViewController: DoodleViewController, isEditingText: Bool)
+    func doodleViewController(_ doodleViewController: DoodleViewController, isEditingText: Bool)
     
     /// Tells the delegate to handle a touchesBegan event on the drawing container.
     ///
     /// - Parameter touchPoint: The point in this view's coordinate system where the touch began.
-    func doodleDrawingContainerTouchBeganAtPoint(touchPoint: CGPoint)
+    func doodleDrawingContainerTouchBegan(at touchPoint: CGPoint)
     
     /// Tells the delegate to handle a touchesMoved event on the drawing container.
     ///
     /// - Parameter touchPoint: The point in this view's coordinate system to which the touch moved.
-    func doodleDrawingContainerTouchMovedToPoint(touchPoint: CGPoint)
+    func doodleDrawingContainerTouchMoved(to touchPoint: CGPoint)
     
     /// Tells the delegate to handle a touchesEnded event on the drawing container.
     func doodleDrawingContainerTouchEnded()
@@ -32,150 +32,164 @@ public protocol DoodleViewControllerDelegate: class {
     /// Tells the delegate to handle a touchesBegan event on the text container.
     ///
     /// - Parameter touchPoint: The point in this view's coordinate system where the touch began.
-    func doodleTextContainerTouchBeganAtPoint(touchPoint: CGPoint)
+    func doodleTextContainerTouchBegan(at touchPoint: CGPoint)
     
     /// Tells the delegate to handle a touchesMoved event on the text container.
     ///
     /// - Parameter touchPoint: The point in this view's coordinate system to which the touch moved.
-    func doodleTextContainerTouchMovedToPoint(touchPoint: CGPoint)
+    func doodleTextContainerTouchMoved(to touchPoint: CGPoint)
     
     /// Tells the delegate to handle a touchesEnded event on the text container.
     ///
     /// - Parameter touchPoint: The point in this view's coordinate system to which the touch ended.
-    func doodleTextContainerTouchEndedAtPoint(touchPoint: CGPoint)
+    func doodleTextContainerTouchEnded(at touchPoint: CGPoint)
 }
 
 public class DoodleViewController: UIViewController {
 
     /// The delegate of the JotViewController instance.
-    weak var delegate: DoodleViewControllerDelegate?
+    public weak var delegate: DoodleViewControllerDelegate?
     
     /// The state of the JotViewController. Change the state between JotViewStateDrawing and JotViewStateText in response to your own editing controls to toggle between the different modes. Tapping while in JotViewStateText will automatically switch to JotViewStateEditingText, and tapping the keyboard's Done button will automatically switch back to JotViewStateText.
     ///
     /// - Note: The JotViewController's delegate will get updates when it enters and exits text editing mode, in case you need to update your interface to reflect this.
-    var state: DoodleViewState = .default
+    public var state: DoodleViewState = .default {
+        didSet { updateState(state, oldValue: oldValue) }
+    }
     
     /// The font of the text displayed in the JotTextView and JotTextEditView.
     ///
     /// - Note: To change the default size of the font, you must also set the fontSize property to the desired font size.
-    var font: UIFont = UIFont.systemFont(ofSize: 16)
+    public var font: UIFont = UIFont.systemFont(ofSize: 37) {
+        didSet { updateFont(font) }
+    }
     
     /// The initial font size of the text displayed in the JotTextView before pinch zooming, and the fixed font size of the JotTextEditView.
     ///
     /// - Note: This property overrides the size of the font property.
-    var fontSize: CGFloat = 16
+    public var fontSize: CGFloat = 37 {
+        didSet { updateFontSize(fontSize) }
+    }
     
     /// The color of the text displayed in the JotTextView and the JotTextEditView.
-    var textColor: UIColor = .black
+    public var textColor: UIColor = .white {
+        didSet { updateTextColor(textColor) }
+    }
     
     // Text shadow properties.
-    var textShadowColor: UIColor = .black
-    var textShadowOpacity: CGFloat = 0
-    var textShadowOffset: CGSize = .zero
-    var textShadowBlurRadius: CGFloat = 0
+    public var textShadowColor: UIColor = .black {
+        didSet { updateTextShadowColor(textShadowColor) }
+    }
+    public var textShadowOpacity: CGFloat = 0 {
+        didSet { updateTextShadowOpacity(textShadowOpacity) }
+    }
+    public var textShadowOffset: CGSize = .zero {
+        didSet { updateTextShadowOffset(textShadowOffset) }
+    }
+    public var textShadowBlurRadius: CGFloat = 0 {
+        didSet { updateTextShadowBlurRadius(textShadowBlurRadius) }
+    }
     
     /// The text string the JotTextView and JotTextEditView are displaying.
-    var textString: String = ""
+    public var textString: String = "" {
+        didSet { updateTextString(textString) }
+    }
     
     /// The alignment of the text displayed in the JotTextView, which only applies if fitOriginalFontSizeToViewWidth is true, and the alignment of the text displayed in the JotTextEditView regardless of other settings.
-    var textAlignment: NSTextAlignment = .center
-    
+    public var textAlignment: NSTextAlignment = .center {
+        didSet { updateTextAlignment(textAlignment) }
+    }
     
      /// Sets the stroke color for drawing. Each drawing path can have its own stroke color.
-    var drawingColor: UIColor = .black
+    public var drawingColor: UIColor = .black {
+        didSet { updateDrawingColor(drawingColor) }
+    }
     
     ///Sets the stroke width for drawing if constantStrokeWidth is true, or sets the base strokeWidth for variable drawing paths constantStrokeWidth is false.
-    var drawingStrokeWidth: CGFloat = 0
+    public var drawingStrokeWidth: CGFloat = 0 {
+        didSet { updateDrawingStrokeWidth(drawingStrokeWidth) }
+    }
     
-     /// Set to `true` if you want the stroke width for drawing to be constant, `false` if the stroke width should vary depending on drawing speed.
-    var drawingConstantStrokeWidth: Bool = false
+    /// Set to `true` if you want the stroke width for drawing to be constant, `false` if the stroke width should vary depending on drawing speed.
+    public var drawingConstantStrokeWidth: Bool = false {
+        didSet { updateIsDrawingConstantStrokeWidth(drawingConstantStrokeWidth) }
+    }
     
-    /// The view insets of the text displayed in the JotTextEditView. By default, the text that extends beyond the insets of the text input view will fade out with a gradient to the edges of the JotTextEditView. If clipBoundsToEditingInsets is true, then the text will be clipped at the inset instead of fading out.
-    var textEditingInsets: UIEdgeInsets = .zero
+    /// The view insets of the text displayed in the DoodleTextEditView.
+    public var textEditingInsets: UIEdgeInsets = .zero {
+        didSet { updateTextEditingInsets(textEditingInsets) }
+    }
     
     /// The initial insets of the text displayed in the JotTextView, which only applies if fitOriginalFontSizeToViewWidth is true. If fitOriginalFontSizeToViewWidth is true, then initialTextInsets sets the initial insets of the displayed text relative to the full size of the JotTextView. The user can resize, move, and rotate the text from that starting position, but the overall proportions of the text will stay the same.
     ///
     /// - Note: This will be ignored if fitOriginalFontSizeToViewWidth is false.
-    var initialTextInsets: UIEdgeInsets = .zero
+    public var initialTextInsets: UIEdgeInsets = .zero {
+        didSet { updateInitialTextInsets(initialTextInsets) }
+    }
     
     /// If fitOriginalFontSizeToViewWidth is true, then the text will wrap to fit within the width of the JotTextView, with the given initialTextInsets, if any. The layout will reflect the textAlignment property as well as the initialTextInsets property. If this is false, then the text will be displayed as a single line, and will ignore any initialTextInsets and textAlignment settings.
-    var fitOriginalFontSizeToViewWidth = false
+    public var fitOriginalFontSizeToViewWidth = true {
+        didSet { updateFitOriginalFontSizeToViewWidth(fitOriginalFontSizeToViewWidth) }
+    }
     
-    /// By default, clipBoundsToEditingInsets is false, and the text that extends beyond the insets of the text input view in the JotTextEditView will fade out with a gradient to the edges of the JotTextEditView. If clipBoundsToEditingInsets is true, then the text will be clipped at the inset instead of fading out in the JotTextEditView.
-    var clipBoundsToEditingInsets = false
-    
-    fileprivate(set) lazy var drawingContainer: DoodleDrawingContainerView = {
+    // Drawing subviews
+    fileprivate(set) lazy var drawingContainer: DoodleDrawingContainerView = { [unowned self] in
         let view = DoodleDrawingContainerView()
+        view.delegate = self
         view.translatesAutoresizingMaskIntoConstraints = false
-        return view
+       return view
     }()
     fileprivate(set) lazy var drawView: DoodleDrawView = {
         let view = DoodleDrawView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
-//    fileprivate(set) lazy var textView: DoodleTextView
     
-//    @property (nonatomic, strong) UITapGestureRecognizer *tapRecognizer;
-//    @property (nonatomic, strong) UIPinchGestureRecognizer *pinchRecognizer;
-//    @property (nonatomic, strong) UIRotationGestureRecognizer *rotationRecognizer;
-//    @property (nonatomic, strong) UIPanGestureRecognizer *panRecognizer;
-//    @property (nonatomic, strong, readwrite) JotDrawingContainer *drawingContainer;
-//    @property (nonatomic, strong) JotDrawView *drawView;
-//    @property (nonatomic, strong) JotTextEditView *textEditView;
+    // Text subviews
+    fileprivate lazy var textView: DoodleTextView = { [unowned self] in
+        let tv = DoodleTextView()
+        tv.translatesAutoresizingMaskIntoConstraints = false
+        tv.font = self.font
+        tv.fontSize = self.fontSize
+        tv.textColor = self.textColor
+        return tv
+    }()
+    fileprivate lazy var textEditView: DoodleTextEditView = { [unowned self] in
+        let view = DoodleTextEditView()
+        view.font = self.font
+        view.fontSize = self.fontSize
+        view.textColor = self.textColor
+        view.delegate = self
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
     
-    /// Removes last stroke. A stroke is all paths that have been created from touch down to touch up.
-    func undoLastStroke() {
+    // Gesture recognizers
+    fileprivate var tapRecognizer: UITapGestureRecognizer?
+    fileprivate var pinchRecognizer: UIPinchGestureRecognizer?
+    fileprivate var rotationRecognizer: UIRotationGestureRecognizer?
+    fileprivate var panRecognizer: UIPanGestureRecognizer?
+    
+    fileprivate func addGestureRecognizers() {
+        pinchRecognizer = UIPinchGestureRecognizer(target: self,
+                                                   action: #selector(handlePinchOrRotate(gesture:)))
+        rotationRecognizer = UIRotationGestureRecognizer(target: self,
+                                                         action: #selector(handlePinchOrRotate(gesture:)))
+        panRecognizer = UIPanGestureRecognizer(target: self,
+                                               action: #selector(handlePan(gesture:)))
+        tapRecognizer = UITapGestureRecognizer(target: self,
+                                               action: #selector(handleTap(gesture:)))
         
-    }
-    
-    /// Clears all paths from the drawing in and sets the text to an empty string, giving a blank slate.
-    func clearAll() {
-        
-    }
-    
-    
-    /// Clears only the drawing, leaving the text alone.
-    func clearDrawing() {
-        
-    }
-    
-    /// Clears only the text, leaving the drawing alone.
-    func clearText() {
-        
-    }
-    
-    
-    /// Overlays the drawing and text on the given background image at the full resolution of the image.
-    ///
-    /// - Parameter image: The background image to draw on top of.
-    /// - Returns: An image of the rendered drawing and text on the background image.
-    func renderImage(onImage image: UIImage) -> UIImage? {
-        return nil
-    }
-    
-    /// Renders the drawing and text at the view's size with a transparent background.
-    ///
-    /// - Returns: An image of the rendered drawing and text.
-    func renderImage() -> UIImage? {
-        return nil
-    }
-    
-    /// Renders the drawing and text at the view's size with a colored background.
-    ///
-    /// - Parameter backgroundColor: The background color to render the image on.
-    /// - Returns: An image of the rendered drawing and text on a colored background.
-    func renderImage(onColor backgroundColor: UIColor) -> UIImage? {
-        return nil
-    }
-    
-    /// Renders the drawing and text at the view's size multiplied by the given scale with a transparent background.
-    ///
-    /// - Parameter scale: The scale to render the image at.
-    /// - Parameter backgroundColor: The background color to render the image on.
-    /// - Returns: An image of the rendered drawing and text.
-    func renderImage(withScale scale: CGFloat, onColor backgroundColor: UIColor = .clear) -> UIImage? {
-        return nil
+        let gestures: [UIGestureRecognizer] = [
+            pinchRecognizer!,
+            rotationRecognizer!,
+            panRecognizer!,
+            tapRecognizer!
+        ]
+        gestures.forEach {
+            $0.delegate = self
+            drawingContainer.addGestureRecognizer($0)
+        }
     }
     
     
@@ -183,8 +197,272 @@ public class DoodleViewController: UIViewController {
     
     override public func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.view.backgroundColor = .clear
+        drawingContainer.clipsToBounds = true
+        
+        self.view.addSubview(drawingContainer)
+        drawingContainer.pinEdgesToSuperview()
+        
+        drawingContainer.addSubview(drawView)
+        drawView.pinEdgesToSuperview()
+        
+        drawingContainer.addSubview(textView)
+        textView.pinEdgesToSuperview()
+        
+        self.view.addSubview(textEditView)
+        textEditView.pinEdgesToSuperview()
+        
+        addGestureRecognizers()
+    }
+    
+    
+    // MARK: - Property updates
+    
+    fileprivate func updateState(_ state: DoodleViewState, oldValue: DoodleViewState) {
+        guard state != oldValue else { return }
+        
+        if state == .editingText {
+            textView.isHidden = true
+            textEditView.isEditing = true
+        } else {
+            textView.isHidden = false
+            textEditView.isEditing = false
+        }
+        
+        if state == .editingText {
+            delegate?.doodleViewController(self, isEditingText: true)
+        }
+        
+        if state == .text {
+            drawingContainer.isMultipleTouchEnabled = true
+            tapRecognizer?.isEnabled = true
+            panRecognizer?.isEnabled = true
+            pinchRecognizer?.isEnabled = true
+            rotationRecognizer?.isEnabled = true
+        } else {
+            drawingContainer.isMultipleTouchEnabled = false
+            tapRecognizer?.isEnabled = false
+            panRecognizer?.isEnabled = false
+            pinchRecognizer?.isEnabled = false
+            rotationRecognizer?.isEnabled = false
+        }
+    }
+    
+    fileprivate func updateTextString(_ textString: String) {
+        textView.textString = textString
+        textEditView.textString = textString
+    }
+    
+    fileprivate func updateFont(_ font: UIFont) {
+        textView.font = font
+        textEditView.font = font
+    }
+    
+    fileprivate func updateFontSize(_ size: CGFloat) {
+        textView.fontSize = size
+        textEditView.fontSize = size
+    }
+    
+    fileprivate func updateTextAlignment(_ alignment: NSTextAlignment) {
+        textView.textAlignment = alignment
+        textEditView.textAlignment = alignment
+    }
+    
+    fileprivate func updateTextColor(_ color: UIColor) {
+        textView.textColor = color
+        textEditView.textColor = color
+    }
+    
+    fileprivate func updateTextShadowColor(_ color: UIColor) {
+        textView.textLabel.layer.shadowColor = color.cgColor
+    }
+    
+    fileprivate func updateTextShadowOpacity(_ opacity: CGFloat) {
+        textView.textLabel.layer.shadowOpacity = Float(opacity)
+    }
+    
+    fileprivate func updateTextShadowOffset(_ offset: CGSize) {
+        textView.textLabel.shadowOffset = offset
+    }
+    
+    fileprivate func updateTextShadowBlurRadius(_ radius: CGFloat) {
+        textView.textLabel.layer.shadowRadius = radius
+    }
+    
+    fileprivate func updateInitialTextInsets(_ insets: UIEdgeInsets) {
+        textView.initialTextInsets = insets
+    }
+    
+    fileprivate func updateTextEditingInsets(_ insets: UIEdgeInsets) {
+        textEditView.textEditingInsets = insets
+    }
+    
+    fileprivate func updateFitOriginalFontSizeToViewWidth(_ isFitting: Bool) {
+        self.textView.fitOriginalFontSizeToViewWidth = isFitting
+        if isFitting {
+            textEditView.textAlignment = textAlignment
+        } else {
+            textEditView.textAlignment = .left
+        }
+    }
+    
+    fileprivate func updateDrawingColor(_ color: UIColor) {
+        drawView.strokeColor = color
+    }
+    
+    fileprivate func updateDrawingStrokeWidth(_ strokeWidth: CGFloat) {
+        drawView.strokeWidth = strokeWidth
+    }
+    
+    fileprivate func updateIsDrawingConstantStrokeWidth(_ isConstantWidth: Bool) {
+        drawView.isStrokeWidthConstant = isConstantWidth
     }
 }
+
+
+// MARK: - Undo
+
+extension DoodleViewController {
+    /// Removes last stroke. A stroke is all paths that have been created from touch down to touch up.
+    public func undoLastStroke() {
+        drawView.undoLastStroke()
+    }
+ 
+    /// Clears all paths from the drawing in and sets the text to an empty string, giving a blank slate.
+    public func clearAll() {
+        clearDrawing()
+        clearText()
+    }
+ 
+    /// Clears only the drawing, leaving the text alone.
+    public func clearDrawing() {
+        drawView.clearDrawing()
+    }
+    
+    /// Clears only the text, leaving the drawing alone.
+    public func clearText() {
+        textView.clearText()
+    }
+}
+
+
+// MARK: - Rendering
+
+extension DoodleViewController {
+    /// Overlays the drawing and text on the given background image at the full resolution of the image.
+    ///
+    /// - Parameter image: The background image to draw on top of.
+    /// - Returns: An image of the rendered drawing and text on the background image.
+    public func renderedImage(onImage image: UIImage? = nil) -> UIImage? {
+        let drawing = drawView.renderedDrawing(onImage: image, size: self.view.bounds.size)
+        let drawingAndText = textView.renderedText(onImage: drawing, size: self.view.bounds.size)
+        return drawingAndText
+    }
+    
+    /// Renders the drawing and text at the view's size multiplied by the given scale with a transparent background.
+    ///
+    /// - Parameter scale: The scale to render the image at.
+    /// - Parameter backgroundColor: The background color to render the image on.
+    /// - Returns: An image of the rendered drawing and text.
+    public func renderedImage(onColor backgroundColor: UIColor = .clear) -> UIImage? {
+        let backgroundImage = UIImage.imageWithColor(backgroundColor, ofSize: self.view.bounds.size)
+        let drawing = drawView.renderedDrawing(onImage: backgroundImage, size: self.view.bounds.size)
+        return drawing
+    }
+}
+
+
+// MARK: - Gesture handling
+
+extension DoodleViewController {
+    func handleTap(gesture: UITapGestureRecognizer) {
+        // Set to text editing on tap.
+        if state != .editingText {
+            state = .editingText
+        }
+    }
+    
+    func handlePan(gesture: UIPanGestureRecognizer) {
+        textView.handlePan(gesture: gesture)
+        
+        if state == .text {
+            // Forward to text view.
+            let location = gesture.location(in: self.textView)
+            switch gesture.state {
+            case .began:
+                delegate?.doodleTextContainerTouchBegan(at: location)
+            case .changed:
+                delegate?.doodleTextContainerTouchMoved(to: location)
+            case .ended, .cancelled:
+                delegate?.doodleTextContainerTouchEnded(at: location)
+            default: break
+            }
+        }
+    }
+    
+    func handlePinchOrRotate(gesture: UIGestureRecognizer) {
+        textView.handlePinchOrRotate(gesture: gesture)
+    }
+}
+
+
+// MARK: - DoodleDrawingContainerViewDelegate
+extension DoodleViewController: DoodleDrawingContainerViewDelegate {
+    func doodleDrawingContainerViewTouchBegan(at point: CGPoint) {
+        if state == .drawing {
+            drawView.drawTouchBegan(at: point)
+            delegate?.doodleDrawingContainerTouchBegan(at: point)
+        }
+    }
+    
+    func doodleDrawingContainerViewTouchMoved(to point: CGPoint) {
+        if state == .drawing {
+            drawView.drawTouchPointMoved(to: point)
+            delegate?.doodleDrawingContainerTouchMoved(to: point)
+        }
+    }
+    
+    func doodleDrawingContainerViewTouchEnded(at point: CGPoint) {
+        if state == .drawing {
+            drawView.drawTouchEnded()
+            delegate?.doodleDrawingContainerTouchEnded()
+        }
+    }
+}
+
+
+// MARK: - UIGestureRecognizerDelegate
+
+extension DoodleViewController: UIGestureRecognizerDelegate {
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
+    
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        if gestureRecognizer is UITapGestureRecognizer {
+            return true
+        } else {
+            return false
+        }
+    }
+}
+
+
+// MARK: - DoodleTextEditViewDelegate
+
+extension DoodleViewController: DoodleTextEditViewDelegate {
+    func doodleTextEditViewFinishedEditing(withText text: String?) {
+        if state == .editingText {
+            state = .text
+        }
+        updateTextString(text ?? "")
+        delegate?.doodleViewController(self, isEditingText: false)
+    }
+}
+
+
+// MARK: - DoodleViewState
 
 public extension DoodleViewController {
     public enum DoodleViewState {

@@ -22,10 +22,14 @@ class DoodleDrawView: UIView {
     var strokeWidth: CGFloat = 10
     
     /// Sets the stroke color. Each path can have its own stroke color.
-    fileprivate(set) var strokeColor: UIColor = .black
+    var strokeColor: UIColor = .black {
+        didSet { updateStrokeColor(strokeColor) }
+    }
     
     /// Set to YES if you want the stroke width to be constant, NO if the stroke width should vary depending on drawing speed.
-    fileprivate(set) var isStrokeWidthConstant: Bool = false
+    var isStrokeWidthConstant: Bool = false {
+        didSet { updateIsStrokeWidthConstant(isStrokeWidthConstant) }
+    }
     
     /// Image representing paths in the `pathArray` that have been drawn to a static image.
     fileprivate var cachedDrawnPathsImage: UIImage?
@@ -113,23 +117,21 @@ class DoodleDrawView: UIView {
     
     // MARK: - Property updates
     
-    func updateIsStrokeWidthConstant(_ isConstant: Bool) {
-        guard isConstant != isStrokeWidthConstant else { return }
+    fileprivate func updateIsStrokeWidthConstant(_ isConstant: Bool) {
         isStrokeWidthConstant = isConstant
         currentBezierPath = nil
         points = []
         pointsCounter = 0
     }
     
-    func updateStrokeColor(_ strokeColor: UIColor) {
-        self.strokeColor = strokeColor
+    fileprivate func updateStrokeColor(_ strokeColor: UIColor) {
         currentBezierPath = nil
     }
     
     
     // MARK: - Touch handling
     
-    func drawTouchBeganAtPoint(_ point: CGPoint) {
+    func drawTouchBegan(at point: CGPoint) {
         lastVelocity = initialVelocity
         lastWidth = strokeWidth
         pointsCounter = 0
@@ -139,7 +141,7 @@ class DoodleDrawView: UIView {
         points = [touchPoint]
     }
     
-    func drawTouchPointMovedToPoint(_ point: CGPoint) {
+    func drawTouchPointMoved(to point: CGPoint) {
         pointsCounter += 1
         points.append(DoodleTouchPoint(withCgPoint: point))
         
@@ -172,6 +174,7 @@ class DoodleDrawView: UIView {
             }
             
             currentStrokes.append(bezierPath)
+            currentBezierPath = bezierPath
             
             points[0] = points[3]
             points[1] = points[4]
@@ -265,24 +268,24 @@ class DoodleDrawView: UIView {
     
     // MARK: - Image rendering
 
-    fileprivate func renderDrawing(withSize size: CGSize) -> UIImage? {
-        return drawAllPathsOnImage(nil, withSize: size)
+    fileprivate func renderedDrawing(withSize size: CGSize) -> UIImage? {
+        return drawAllPathsOnImage(nil, size: size)
     }
     
     fileprivate func drawAllPaths() {
         guard let context = UIGraphicsGetCurrentContext() else { return }
         paths.forEach { $0.draw(inContext: context) }
     }
-
-    func draw(onImage image: UIImage) -> UIImage? {
-        return drawAllPathsOnImage(image, withSize: image.size)
-    }
     
-    func drawAllPathsOnImage(_ image: UIImage?, withSize size: CGSize) -> UIImage? {
+    fileprivate func drawAllPathsOnImage(_ image: UIImage?, size: CGSize) -> UIImage? {
         UIGraphicsBeginImageContextWithOptions(size, false, 0)
         image?.draw(in: CGRect(x: 0, y: 0, width: self.bounds.width, height: self.bounds.height))
         drawAllPaths()
         defer { UIGraphicsEndImageContext() }
         return UIGraphicsGetImageFromCurrentImageContext()
+    }
+    
+    func renderedDrawing(onImage image: UIImage? = nil, size: CGSize) -> UIImage? {
+        return drawAllPathsOnImage(image, size: size)
     }
 }

@@ -23,54 +23,65 @@ internal class DoodleTextEditView: UIView {
     /// Whether or not the DoodleTextEditView is actively in edit mode. This property controls whether or not the keyboard is displayed and the DoodleTextEditView is visible.
     ///
     /// - Note: Set the DoodleViewController state to DoodleViewStateEditingText to turn on editing mode in DoodleTextEditView.
-    var isEditing = false
+    var isEditing = false {
+        didSet { updateIsEditing(isEditing) }
+    }
 
     /// The text string the DoodleTextEditView is currently displaying.
     ///
     /// - Note: Set textString in DoodleViewController to control or read this property.
-    var text: String {
-        set { textView.text = text }
+    var textString: String {
+        set { textView.text = textString }
         get { return textView.text }
     }
     
     /// The color of the text displayed in the DoodleTextEditView.
     ///
     /// - Note: Set textColor in DoodleViewController to control this property.
-    var textColor: UIColor = .white
+    var textColor: UIColor = .white {
+        didSet { updateTextColor(textColor) }
+    }
     
     /// The font of the text displayed in the DoodleTextEditView.
     ///
     /// - Note: Set font in DoodleViewController to control this property. To change the default size of the font, you must also set the fontSize property to the desired font size.
-    var font = UIFont.systemFont(ofSize: 40)
+    var font = UIFont.systemFont(ofSize: 40) {
+        didSet { updateFont(font) }
+    }
     
     /// The font size of the text displayed in the DoodleTextEditView.
     ///
     /// - Note: Set fontSize in DoodleViewController to control this property, which overrides the size of the font property.
-    var fontSize: CGFloat = 40
+    var fontSize: CGFloat = 40 {
+        didSet { updateFontSize(fontSize) }
+    }
     
     /// The alignment of the text displayed in the DoodleTextEditView.
     ///
     /// - Note: Set textAlignment in DoodleViewController to control this property.
-    var textAlignment: NSTextAlignment = .left
+    var textAlignment: NSTextAlignment {
+        get { return textView.textAlignment }
+        set { textView.textAlignment = newValue }
+    }
     
-    /// The view insets of the text displayed in the DoodleTextEditView. By default, the text that extends beyond the insets of the text input view will fade out with a gradient to the edges of the DoodleTextEditView. If clipBoundsToEditingInsets is true, then the text will be clipped at the inset instead of fading out.
+    /// The view insets of the text displayed in the DoodleTextEditView.
     ///
     /// - Note: Set textEditingInsets in DoodleViewController to control this property.
-    var textEditingInsets: UIEdgeInsets = .zero
-    
-    /// By default, clipBoundsToEditingInsets is false, and the text that extends beyond the insets of the text input view will fade out with a gradient to the edges of the DoodleTextEditView. If clipBoundsToEditingInsets is true, then the text will be clipped at the inset instead of fading out.
-    ///
-    /// - Note: Set clipBoundsToEditingInsets in DoodleViewController to control this property.
-    var isClippingBoundsToEditingInsets: Bool = false
+    var textEditingInsets: UIEdgeInsets = .zero {
+        didSet { updateTextEditingInsets(textEditingInsets) }
+    }
     
     fileprivate lazy var textView: UITextView = { [unowned self] in
         let tv = UITextView()
+        tv.textColor = self.textColor
+        tv.font = self.font.withSize(self.fontSize)
         tv.backgroundColor = .clear
         tv.keyboardType = .default
         tv.returnKeyType = .done
         tv.clipsToBounds = false
         tv.delegate = self
         tv.translatesAutoresizingMaskIntoConstraints = false
+        tv.textAlignment = .center
         return tv
     }()
     
@@ -79,31 +90,6 @@ internal class DoodleTextEditView: UIView {
         view.layer.masksToBounds = true
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
-    }()
-    
-    fileprivate lazy var gradientMask: CAGradientLayer = {
-        let layer = CAGradientLayer()
-        layer.colors = [
-            UIColor(white: 1, alpha: 0),
-            UIColor(white: 1, alpha: 0.4),
-            UIColor(white: 1, alpha: 0.7),
-            UIColor(white: 1, alpha: 1),
-            UIColor(white: 1, alpha: 1),
-            UIColor(white: 1, alpha: 0.7),
-            UIColor(white: 1, alpha: 0.4),
-            UIColor(white: 1, alpha: 0)
-        ]
-        return layer
-    }()
-    
-    fileprivate var topGradient: CAGradientLayer = {
-       let layer = CAGradientLayer()
-        return layer
-    }()
-    
-    fileprivate var bottomGradient: CAGradientLayer = {
-        let layer = CAGradientLayer()
-        return layer
     }()
     
     fileprivate var textContainerBottomConstraint: NSLayoutConstraint?
@@ -119,19 +105,18 @@ internal class DoodleTextEditView: UIView {
         
         // Add subviews.
         self.addSubview(textContainer)
-        let hConstraints = NSLayoutConstraint.constraints(withVisualFormat: "H:|[view]|",
-                                                          options: [],
-                                                          metrics: nil,
-                                                          views: ["view": textContainer])
-        let vConstraints = NSLayoutConstraint.constraints(withVisualFormat: "V:|[view]|",
-                                                          options: [],
-                                                          metrics: nil,
-                                                          views: ["view": textContainer])
-        self.addConstraints(hConstraints)
-        self.addConstraints(vConstraints)
+        textContainer.pinEdgesToSuperview(edges: [.left, .top, .right])
+        textContainerBottomConstraint = textContainer.pinBottomToSuperview()
         
         textContainer.addSubview(textView)
         updateTextEditingInsets(.zero)
+        
+        // Add notification listeners.
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardFrameDidChange(notification:)),
+            name: .UIKeyboardDidChangeFrame,
+            object: nil)
     }
     
     override init(frame: CGRect) {
@@ -162,7 +147,7 @@ internal class DoodleTextEditView: UIView {
             animationCurve = value
         }
         
-        textContainerBottomConstraint?.constant = keyboardRectEnd.height
+        textContainerBottomConstraint?.constant = -keyboardRectEnd.height
 
         UIView.animate(
             withDuration: duration,
@@ -183,21 +168,11 @@ internal class DoodleTextEditView: UIView {
     fileprivate func updateTextEditingInsets(_ inset: UIEdgeInsets) {
         if let textViewLayoutConstraints = textViewLayoutConstraints {
             for constraint in textViewLayoutConstraints {
-                constraint.isActive = false
+                textView.removeConstraint(constraint)
             }
         }
         
-        let hConstraints = NSLayoutConstraint.constraints(withVisualFormat: "H:|-(left)-[view]-(right)-|",
-                                                          options: [],
-                                                          metrics: ["left": inset.left, "right": inset.right],
-                                                          views: ["view": textView])
-        let vConstraints = NSLayoutConstraint.constraints(withVisualFormat: "V:|-(top)-[view]-(bottom)-|",
-                                                          options: [],
-                                                          metrics: ["top": inset.top, "bottom": inset.bottom],
-                                                          views: ["view": textView])
-        textViewLayoutConstraints = [hConstraints, vConstraints].flatMap { $0 }
-        self.addConstraints(textViewLayoutConstraints!)
-        
+        textViewLayoutConstraints = textView.pinEdgesToSuperview(edges: [.all], padding: inset)
         textView.layoutIfNeeded()
         textView.setContentOffset(.zero, animated:false)
     }
@@ -210,17 +185,8 @@ internal class DoodleTextEditView: UIView {
         textView.font = font.withSize(size)
     }
     
-    fileprivate func updateTextAlignment(_ alignment: NSTextAlignment) {
-        textView.textAlignment = alignment
-    }
-    
     fileprivate func updateTextColor(_ color: UIColor) {
         textView.textColor = color
-    }
-    
-    fileprivate func updateIsClippingBoundsToEditingInsets(_ isClipping: Bool) {
-        textView.clipsToBounds = isClipping
-        setupGradientMask()
     }
     
     fileprivate func updateIsEditing(_ isEditing: Bool) {
@@ -232,43 +198,7 @@ internal class DoodleTextEditView: UIView {
         } else {
             self.backgroundColor = .clear
             textView.resignFirstResponder()
-            delegate?.doodleTextEditViewFinishedEditing(withText: text)
-        }
-    }
-    
-    
-    // MARK: - Layout
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        setupGradientMask()
-    }
-    
-    
-    // MARK: - Gradient setup
-    
-    fileprivate func setupGradientMask() {
-        if !isClippingBoundsToEditingInsets {
-            textContainer.layer.mask = gradientMask
-            
-            let percentTopOffset = Double(textEditingInsets.top / textContainer.bounds.height)
-            let percentBottomOffset = Double(textEditingInsets.bottom / textContainer.bounds.height)
-            
-            gradientMask.locations = [
-                NSNumber(value: 0),
-                NSNumber(value: (0.8 * percentTopOffset)),
-                NSNumber(value: (0.9 * percentTopOffset)),
-                NSNumber(value: (1 * percentTopOffset)),
-                NSNumber(value: (1 - (1 * percentBottomOffset))),
-                NSNumber(value: (1 - (0.9 * percentBottomOffset))),
-                NSNumber(value: (1 - (0.8 * percentBottomOffset))),
-                NSNumber(value: 1)
-            ]
-
-            gradientMask.frame = CGRect(origin: .zero,
-                                        size: textContainer.bounds.size)
-        } else {
-            textContainer.layer.mask = nil
+            delegate?.doodleTextEditViewFinishedEditing(withText: textString)
         }
     }
 }

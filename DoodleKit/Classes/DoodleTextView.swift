@@ -8,14 +8,14 @@
 
 import UIKit
 
-class DoodleTextView: UIView {
+internal class DoodleTextView: UIView {
     
     /// The label used for displaying text.
     fileprivate(set) lazy var textLabel: UILabel = { [unowned self] in
         let label = UILabel()
+        label.textAlignment = .center
         label.font = self.font
         label.textColor = .white
-        label.textAlignment = self.textAlignment
         label.center = CGPoint(x: UIScreen.main.bounds.midX,
                                y: UIScreen.main.bounds.midY)
         return label
@@ -46,14 +46,14 @@ class DoodleTextView: UIView {
     ///
     /// - Note: Set font in JotViewController to control this property. To change the default size of the font, you must also set the fontSize property to the desired font size.
     var font: UIFont = UIFont.systemFont(ofSize: 60) {
-        didSet { updateFont() }
+        didSet { updateFont(font) }
     }
     
     /// The initial font size of the text displayed in the JotTextView. The displayed text's font size will get proportionally larger or smaller than this size if the viewer pinch zooms the text.
     ///
     /// - Note: Set fontSize in JotViewController to control this property, which overrides the size of the font property.
     var fontSize: CGFloat = 60 {
-        didSet { updateFontSize() }
+        didSet { updateFontSize(fontSize) }
     }
     
     /// The alignment of the text displayed in the JotTextView, which only applies if fitOriginalFontSizeToViewWidth is true.
@@ -78,15 +78,23 @@ class DoodleTextView: UIView {
         didSet { updateFitOriginalFontSizeToViewWidth(fitOriginalFontSizeToViewWidth) }
     }
     
-    var textEditingContainer: UIView?
-    var textEditingView: UITextView?
-    var referenceRotateTransform: CGAffineTransform = .identity
-    var currentRotateTransform: CGAffineTransform = .identity
-    var referenceCenter: CGPoint = .zero
-    var activePinchRecognizer: UIPinchGestureRecognizer?
-    var activeRotationRecognizer: UIRotationGestureRecognizer?
-    var scale: CGFloat = 1
-    var labelFrame: CGRect = .zero
+    var scale: CGFloat = 1 {
+        didSet { updateScale(scale) }
+    }
+    
+    var labelFrame: CGRect = .zero {
+        didSet {
+            updateLabelFrame(labelFrame)
+        }
+    }
+    
+    fileprivate var textEditingContainer: UIView?
+    fileprivate var textEditingView: UITextView?
+    fileprivate var referenceRotateTransform: CGAffineTransform = .identity
+    fileprivate var currentRotateTransform: CGAffineTransform = .identity
+    fileprivate var referenceCenter: CGPoint = .zero
+    fileprivate var activePinchRecognizer: UIPinchGestureRecognizer?
+    fileprivate var activeRotationRecognizer: UIRotationGestureRecognizer?
     
     
     // MARK: - Init
@@ -125,6 +133,11 @@ class DoodleTextView: UIView {
     
     // MARK: - Property updates
     
+    fileprivate func updateTextAlignment(_ alignment: NSTextAlignment) {
+        textLabel.textAlignment = alignment
+        sizeLabel()
+    }
+    
     fileprivate func updateScale(_ scale: CGFloat) {
         textLabel.transform = .identity
         let labelCenter = textLabel.center
@@ -140,17 +153,12 @@ class DoodleTextView: UIView {
         textLabel.transform = currentRotateTransform
     }
     
-    fileprivate func updateFontSize() {
+    fileprivate func updateFontSize(_ size: CGFloat) {
         adjustLabelFont()
     }
     
-    fileprivate func updateFont() {
+    fileprivate func updateFont(_ font: UIFont) {
         adjustLabelFont()
-    }
-    
-    fileprivate func updateTextAlignment(_ alignment: NSTextAlignment) {
-        textLabel.textAlignment = alignment
-        sizeLabel()
     }
     
     fileprivate func updateInitialTextInsets(_ insets: UIEdgeInsets) {
@@ -236,7 +244,7 @@ class DoodleTextView: UIView {
     ///
     /// - Parameter gesture: The pan gesture recognizer to handle.
     /// - Note: This method is triggered by the JotDrawController's internal pan gesture recognizer.
-    func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
+    func handlePan(gesture: UIPanGestureRecognizer) {
         switch (gesture.state) {
         case .began:
             referenceCenter = textLabel.center
@@ -254,7 +262,7 @@ class DoodleTextView: UIView {
     ///
     /// - Parameter gesture: The pinch or rotation gesture recognizer to handle.
     /// - Note: This method is triggered by the JotDrawController's internal pinch and rotation gesture recognizers.
-    func handlePinchOrRotateGesture(_ gesture: UIGestureRecognizer) {
+    func handlePinchOrRotate(gesture: UIGestureRecognizer) {
         switch (gesture.state) {
         case .began:
             if let gesture = gesture as? UIRotationGestureRecognizer {
@@ -307,22 +315,14 @@ class DoodleTextView: UIView {
     ///
     /// - Parameter image: The background image to render text on top of.
     /// - Returns: An image of the rendered drawing on the background image.
-    func drawText(onImage image: UIImage?) -> UIImage? {
-        UIGraphicsBeginImageContextWithOptions(self.bounds.size, false, 0)
+    func renderedText(onImage image: UIImage? = nil, size: CGSize) -> UIImage? {
+        UIGraphicsBeginImageContextWithOptions(size, false, 0)
         guard let context = UIGraphicsGetCurrentContext() else { return nil }
         
-        image?.draw(in: CGRect(origin: .zero, size: self.bounds.size))
+        image?.draw(in: CGRect(origin: .zero, size: size))
         self.layer.render(in: context)
         
         defer { UIGraphicsEndImageContext() }
         return UIGraphicsGetImageFromCurrentImageContext()
-    }
-    
-    /// Renders the text overlay at full resolution for the given size.
-    ///
-    /// - Parameter size: The size of the image to return.
-    /// - Returns: An image of the rendered text.
-    func renderDrawTextView(withSize size: CGSize) -> UIImage? {
-        return drawText(onImage: nil)
     }
 }
