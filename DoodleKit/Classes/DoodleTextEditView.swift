@@ -44,16 +44,9 @@ internal class DoodleTextEditView: UIView {
     
     /// The font of the text displayed in the DoodleTextEditView.
     ///
-    /// - Note: Set font in DoodleViewController to control this property. To change the default size of the font, you must also set the fontSize property to the desired font size.
+    /// - Note: Set font in DoodleViewController to control this property.
     var font = UIFont.systemFont(ofSize: 40) {
         didSet { updateFont(font) }
-    }
-    
-    /// The font size of the text displayed in the DoodleTextEditView.
-    ///
-    /// - Note: Set fontSize in DoodleViewController to control this property, which overrides the size of the font property.
-    var fontSize: CGFloat = 40 {
-        didSet { updateFontSize(fontSize) }
     }
     
     /// The alignment of the text displayed in the DoodleTextEditView.
@@ -74,7 +67,7 @@ internal class DoodleTextEditView: UIView {
     fileprivate lazy var textView: UITextView = { [unowned self] in
         let tv = UITextView()
         tv.textColor = self.textColor
-        tv.font = self.font.withSize(self.fontSize)
+        tv.font = self.font
         tv.backgroundColor = .clear
         tv.keyboardType = .default
         tv.returnKeyType = .done
@@ -179,10 +172,6 @@ internal class DoodleTextEditView: UIView {
     
     fileprivate func updateFont(_ font: UIFont) {
         textView.font = font
-    }
-    
-    fileprivate func updateFontSize(_ size: CGFloat) {
-        textView.font = font.withSize(size)
     }
     
     fileprivate func updateTextColor(_ color: UIColor) {

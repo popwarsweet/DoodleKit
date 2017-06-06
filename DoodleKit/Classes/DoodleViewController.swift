@@ -64,13 +64,6 @@ public class DoodleViewController: UIViewController {
         didSet { updateFont(font) }
     }
     
-    /// The initial font size of the text displayed in the DoodleTextView before pinch zooming, and the fixed font size of the DoodleTextEditView.
-    ///
-    /// - Note: This property overrides the size of the font property.
-    public var fontSize: CGFloat = 37 {
-        didSet { updateFontSize(fontSize) }
-    }
-    
     /// The color of the text displayed in the DoodleTextView and the DoodleTextEditView.
     public var textColor: UIColor = .white {
         didSet { updateTextColor(textColor) }
@@ -150,14 +143,12 @@ public class DoodleViewController: UIViewController {
         let tv = DoodleTextView()
         tv.translatesAutoresizingMaskIntoConstraints = false
         tv.font = self.font
-        tv.fontSize = self.fontSize
         tv.textColor = self.textColor
         return tv
     }()
     fileprivate lazy var textEditView: DoodleTextEditView = { [unowned self] in
         let view = DoodleTextEditView()
         view.font = self.font
-        view.fontSize = self.fontSize
         view.textColor = self.textColor
         view.delegate = self
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -257,11 +248,6 @@ public class DoodleViewController: UIViewController {
     fileprivate func updateFont(_ font: UIFont) {
         textView.font = font
         textEditView.font = font
-    }
-    
-    fileprivate func updateFontSize(_ size: CGFloat) {
-        textView.fontSize = size
-        textEditView.fontSize = size
     }
     
     fileprivate func updateTextAlignment(_ alignment: NSTextAlignment) {

@@ -44,16 +44,9 @@ internal class DoodleTextView: UIView {
     
     /// The font of the text displayed in the DoodleTextView.
     ///
-    /// - Note: Set font in DoodleViewController to control this property. To change the default size of the font, you must also set the fontSize property to the desired font size.
+    /// - Note: Set font in DoodleViewController to control this property.
     var font: UIFont = UIFont.systemFont(ofSize: 60) {
         didSet { updateFont(font) }
-    }
-    
-    /// The initial font size of the text displayed in the DoodleTextView. The displayed text's font size will get proportionally larger or smaller than this size if the viewer pinch zooms the text.
-    ///
-    /// - Note: Set fontSize in DoodleViewController to control this property, which overrides the size of the font property.
-    var fontSize: CGFloat = 60 {
-        didSet { updateFontSize(fontSize) }
     }
     
     /// The alignment of the text displayed in the DoodleTextView, which only applies if fitOriginalFontSizeToViewWidth is true.
@@ -145,7 +138,7 @@ internal class DoodleTextView: UIView {
                                       y: 0,
                                       width: labelFrame.width * scale * 1.05,
                                       height: labelFrame.height * scale * 1.05)
-        let currentFontSize = fontSize * scale
+        let currentFontSize = font.pointSize * scale
         
         textLabel.font = font.withSize(currentFontSize)
         textLabel.frame = scaledLabelFrame
@@ -153,12 +146,11 @@ internal class DoodleTextView: UIView {
         textLabel.transform = currentRotateTransform
     }
     
-    fileprivate func updateFontSize(_ size: CGFloat) {
-        adjustLabelFont()
-    }
-    
     fileprivate func updateFont(_ font: UIFont) {
-        adjustLabelFont()
+        let center = textLabel.center
+        textLabel.font = font
+        sizeLabel()
+        textLabel.center = center
     }
     
     fileprivate func updateInitialTextInsets(_ insets: UIEdgeInsets) {
@@ -188,18 +180,10 @@ internal class DoodleTextView: UIView {
     
     // MARK: - Format
     
-    fileprivate func adjustLabelFont() {
-        let currentFontSize = fontSize * scale
-        let center = textLabel.center
-        textLabel.font = font.withSize(currentFontSize)
-        sizeLabel()
-        textLabel.center = center
-    }
-    
     fileprivate func sizeLabel() {
         let tempLabel = UILabel()
         tempLabel.text = textString
-        tempLabel.font = font.withSize(fontSize)
+        tempLabel.font = font
         tempLabel.textAlignment = textAlignment
         
         var insetViewRect: CGRect!
