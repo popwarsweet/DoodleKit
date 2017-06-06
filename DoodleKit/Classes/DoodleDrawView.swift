@@ -18,7 +18,7 @@ class DoodleDrawView: UIView {
     
     /// Sets the stroke width if constantStrokeWidth is true, or sets the base strokeWidth for variable drawing paths.
     ///
-    /// - Note: Set drawingStrokeWidth in JotViewController to control this setting.
+    /// - Note: Set drawingStrokeWidth in DoodleViewController to control this setting.
     var strokeWidth: CGFloat = 10
     
     /// Sets the stroke color. Each path can have its own stroke color.

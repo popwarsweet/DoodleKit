@@ -9,7 +9,7 @@
 import UIKit
 
 public protocol DoodleViewControllerDelegate: class {
-    /// Called whenever the JotViewController begins or ends text editing (keyboard entry) mode.
+    /// Called whenever the DoodleViewController begins or ends text editing (keyboard entry) mode.
     ///
     /// - Parameters:
     ///   - doodleViewController: The draw text view controller.
@@ -47,31 +47,31 @@ public protocol DoodleViewControllerDelegate: class {
 
 public class DoodleViewController: UIViewController {
 
-    /// The delegate of the JotViewController instance.
+    /// The delegate of the DoodleViewController instance.
     public weak var delegate: DoodleViewControllerDelegate?
     
-    /// The state of the JotViewController. Change the state between JotViewStateDrawing and JotViewStateText in response to your own editing controls to toggle between the different modes. Tapping while in JotViewStateText will automatically switch to JotViewStateEditingText, and tapping the keyboard's Done button will automatically switch back to JotViewStateText.
+    /// The state of the DoodleViewController. Change the state between `DoodleViewState.drawing` and `DoodleViewState.text` in response to your own editing controls to toggle between the different modes. Tapping while in `DoodleViewState.text` will automatically switch to `DoodleViewState.editingText`, and tapping the keyboard's Done button will automatically switch back to `DoodleViewState.text`.
     ///
-    /// - Note: The JotViewController's delegate will get updates when it enters and exits text editing mode, in case you need to update your interface to reflect this.
+    /// - Note: The DoodleViewController's delegate will get updates when it enters and exits text editing mode, in case you need to update your interface to reflect this.
     public var state: DoodleViewState = .default {
         didSet { updateState(state, oldValue: oldValue) }
     }
     
-    /// The font of the text displayed in the JotTextView and JotTextEditView.
+    /// The font of the text displayed in the DoodleTextView and DoodleTextEditView.
     ///
     /// - Note: To change the default size of the font, you must also set the fontSize property to the desired font size.
     public var font: UIFont = UIFont.systemFont(ofSize: 37) {
         didSet { updateFont(font) }
     }
     
-    /// The initial font size of the text displayed in the JotTextView before pinch zooming, and the fixed font size of the JotTextEditView.
+    /// The initial font size of the text displayed in the DoodleTextView before pinch zooming, and the fixed font size of the DoodleTextEditView.
     ///
     /// - Note: This property overrides the size of the font property.
     public var fontSize: CGFloat = 37 {
         didSet { updateFontSize(fontSize) }
     }
     
-    /// The color of the text displayed in the JotTextView and the JotTextEditView.
+    /// The color of the text displayed in the DoodleTextView and the DoodleTextEditView.
     public var textColor: UIColor = .white {
         didSet { updateTextColor(textColor) }
     }
@@ -90,12 +90,12 @@ public class DoodleViewController: UIViewController {
         didSet { updateTextShadowBlurRadius(textShadowBlurRadius) }
     }
     
-    /// The text string the JotTextView and JotTextEditView are displaying.
+    /// The text string the DoodleTextView and DoodleTextEditView are displaying.
     public var textString: String = "" {
         didSet { updateTextString(textString) }
     }
     
-    /// The alignment of the text displayed in the JotTextView, which only applies if fitOriginalFontSizeToViewWidth is true, and the alignment of the text displayed in the JotTextEditView regardless of other settings.
+    /// The alignment of the text displayed in the DoodleTextView, which only applies if fitOriginalFontSizeToViewWidth is true, and the alignment of the text displayed in the DoodleTextEditView regardless of other settings.
     public var textAlignment: NSTextAlignment = .center {
         didSet { updateTextAlignment(textAlignment) }
     }
@@ -120,14 +120,14 @@ public class DoodleViewController: UIViewController {
         didSet { updateTextEditingInsets(textEditingInsets) }
     }
     
-    /// The initial insets of the text displayed in the JotTextView, which only applies if fitOriginalFontSizeToViewWidth is true. If fitOriginalFontSizeToViewWidth is true, then initialTextInsets sets the initial insets of the displayed text relative to the full size of the JotTextView. The user can resize, move, and rotate the text from that starting position, but the overall proportions of the text will stay the same.
+    /// The initial insets of the text displayed in the DoodleTextView, which only applies if fitOriginalFontSizeToViewWidth is true. If fitOriginalFontSizeToViewWidth is true, then initialTextInsets sets the initial insets of the displayed text relative to the full size of the DoodleTextView. The user can resize, move, and rotate the text from that starting position, but the overall proportions of the text will stay the same.
     ///
     /// - Note: This will be ignored if fitOriginalFontSizeToViewWidth is false.
     public var initialTextInsets: UIEdgeInsets = .zero {
         didSet { updateInitialTextInsets(initialTextInsets) }
     }
     
-    /// If fitOriginalFontSizeToViewWidth is true, then the text will wrap to fit within the width of the JotTextView, with the given initialTextInsets, if any. The layout will reflect the textAlignment property as well as the initialTextInsets property. If this is false, then the text will be displayed as a single line, and will ignore any initialTextInsets and textAlignment settings.
+    /// If fitOriginalFontSizeToViewWidth is true, then the text will wrap to fit within the width of the DoodleTextView, with the given initialTextInsets, if any. The layout will reflect the textAlignment property as well as the initialTextInsets property. If this is false, then the text will be displayed as a single line, and will ignore any initialTextInsets and textAlignment settings.
     public var fitOriginalFontSizeToViewWidth = true {
         didSet { updateFitOriginalFontSizeToViewWidth(fitOriginalFontSizeToViewWidth) }
     }

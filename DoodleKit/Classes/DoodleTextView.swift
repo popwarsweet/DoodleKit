@@ -21,9 +21,9 @@ internal class DoodleTextView: UIView {
         return label
     }()
     
-    /// The text string the JotTextView is currently displaying.
+    /// The text string the DoodleTextView is currently displaying.
     ///
-    /// - Note: Set textString in JotViewController to control or read this property.
+    /// - Note: Set textString in DoodleViewController to control or read this property.
     var textString: String? {
         set {
             let center = textLabel.center
@@ -34,46 +34,46 @@ internal class DoodleTextView: UIView {
         get { return textLabel.text }
     }
     
-    /// The color of the text displayed in the JotTextView.
+    /// The color of the text displayed in the DoodleTextView.
     ///
-    /// - Note: Set textColor in JotViewController to control this property.
+    /// - Note: Set textColor in DoodleViewController to control this property.
     var textColor: UIColor {
         set { textLabel.textColor = newValue }
         get { return textLabel.textColor }
     }
     
-    /// The font of the text displayed in the JotTextView.
+    /// The font of the text displayed in the DoodleTextView.
     ///
-    /// - Note: Set font in JotViewController to control this property. To change the default size of the font, you must also set the fontSize property to the desired font size.
+    /// - Note: Set font in DoodleViewController to control this property. To change the default size of the font, you must also set the fontSize property to the desired font size.
     var font: UIFont = UIFont.systemFont(ofSize: 60) {
         didSet { updateFont(font) }
     }
     
-    /// The initial font size of the text displayed in the JotTextView. The displayed text's font size will get proportionally larger or smaller than this size if the viewer pinch zooms the text.
+    /// The initial font size of the text displayed in the DoodleTextView. The displayed text's font size will get proportionally larger or smaller than this size if the viewer pinch zooms the text.
     ///
-    /// - Note: Set fontSize in JotViewController to control this property, which overrides the size of the font property.
+    /// - Note: Set fontSize in DoodleViewController to control this property, which overrides the size of the font property.
     var fontSize: CGFloat = 60 {
         didSet { updateFontSize(fontSize) }
     }
     
-    /// The alignment of the text displayed in the JotTextView, which only applies if fitOriginalFontSizeToViewWidth is true.
+    /// The alignment of the text displayed in the DoodleTextView, which only applies if fitOriginalFontSizeToViewWidth is true.
     ///
-    /// - Note: Set textAlignment in JotViewController to control this property, which will be ignored if fitOriginalFontSizeToViewWidth is false.
+    /// - Note: Set textAlignment in DoodleViewController to control this property, which will be ignored if fitOriginalFontSizeToViewWidth is false.
     var textAlignment: NSTextAlignment {
         set { updateTextAlignment(newValue) }
         get { return textLabel.textAlignment }
     }
  
-    /// The initial insets of the text displayed in the JotTextView, which only applies if fitOriginalFontSizeToViewWidth is true. If fitOriginalFontSizeToViewWidth is true, then initialTextInsets sets the initial insets of the displayed text relative to the full size of the JotTextView. The user can resize, move, and rotate the text from that starting position, but the overall proportions of the text will stay the same.
+    /// The initial insets of the text displayed in the DoodleTextView, which only applies if fitOriginalFontSizeToViewWidth is true. If fitOriginalFontSizeToViewWidth is true, then initialTextInsets sets the initial insets of the displayed text relative to the full size of the DoodleTextView. The user can resize, move, and rotate the text from that starting position, but the overall proportions of the text will stay the same.
     ///
-    /// - Note: Set initialTextInsets in JotViewController to control this property, which will be ignored if fitOriginalFontSizeToViewWidth is false.
+    /// - Note: Set initialTextInsets in DoodleViewController to control this property, which will be ignored if fitOriginalFontSizeToViewWidth is false.
     var initialTextInsets: UIEdgeInsets = .zero {
         didSet { updateInitialTextInsets(initialTextInsets) }
     }
     
-    /// If fitOriginalFontSizeToViewWidth is true, then the text will wrap to fit within the width of the JotTextView, with the given initialTextInsets, if any. The layout will reflect the textAlignment property as well as the initialTextInsets property. If this is false, then the text will be displayed as a single line, and will ignore any initialTextInsets and textAlignment settings
+    /// If fitOriginalFontSizeToViewWidth is true, then the text will wrap to fit within the width of the DoodleTextView, with the given initialTextInsets, if any. The layout will reflect the textAlignment property as well as the initialTextInsets property. If this is false, then the text will be displayed as a single line, and will ignore any initialTextInsets and textAlignment settings
     ///
-    /// - Note: Set fitOriginalFontSizeToViewWidth in JotViewController to control this property.
+    /// - Note: Set fitOriginalFontSizeToViewWidth in DoodleViewController to control this property.
     var fitOriginalFontSizeToViewWidth = false {
         didSet { updateFitOriginalFontSizeToViewWidth(fitOriginalFontSizeToViewWidth) }
     }
@@ -240,10 +240,10 @@ internal class DoodleTextView: UIView {
     
     // MARK: - Gesture handling
     
-    /// Tells the JotTextView to handle a pan gesture.
+    /// Tells the DoodleTextView to handle a pan gesture.
     ///
     /// - Parameter gesture: The pan gesture recognizer to handle.
-    /// - Note: This method is triggered by the JotDrawController's internal pan gesture recognizer.
+    /// - Note: This method is triggered by the DoodleDrawController's internal pan gesture recognizer.
     func handlePan(gesture: UIPanGestureRecognizer) {
         switch (gesture.state) {
         case .began:
@@ -258,10 +258,10 @@ internal class DoodleTextView: UIView {
         }
     }
     
-    /// Tells the JotTextView to handle a pinch or rotate gesture.
+    /// Tells the DoodleTextView to handle a pinch or rotate gesture.
     ///
     /// - Parameter gesture: The pinch or rotation gesture recognizer to handle.
-    /// - Note: This method is triggered by the JotDrawController's internal pinch and rotation gesture recognizers.
+    /// - Note: This method is triggered by the DoodleDrawController's internal pinch and rotation gesture recognizers.
     func handlePinchOrRotate(gesture: UIGestureRecognizer) {
         switch (gesture.state) {
         case .began:
