@@ -79,11 +79,11 @@ class DoodleDrawView: UIView {
     // MARK: - Undo
     
     func undoLastStroke() {
+        guard allStrokes.count > 0 else { return }
+        
         // Remove paths for stroke.
-        if let lastStrokePaths = allStrokes.last {
-            paths = paths.filter { !lastStrokePaths.contains($0) }
-        }
-        allStrokes.removeLast()
+        let lastStrokePaths = allStrokes.removeLast()
+        paths = paths.filter { !lastStrokePaths.contains($0) }
         
         // Reset state.
         currentBezierPath = nil
@@ -152,6 +152,7 @@ class DoodleDrawView: UIView {
             points[3] = touchBezierEndPoint
             
             let bezierPath = DoodleTouchBezier(timestamp: CFAbsoluteTimeGetCurrent())
+            bezierPath.strokeColor = strokeColor
             bezierPath.startPoint = points[0].cgPoint
             bezierPath.endPoint = points[3].cgPoint
             bezierPath.controlPoint1 = points[1].cgPoint
@@ -175,6 +176,7 @@ class DoodleDrawView: UIView {
             
             currentStrokes.append(bezierPath)
             currentBezierPath = bezierPath
+            paths.append(bezierPath)
             
             points[0] = points[3]
             points[1] = points[4]
@@ -240,10 +242,9 @@ class DoodleDrawView: UIView {
             touchPoint.strokeWidth = 1.5 * strokeWidthForVelocity(1)
             paths.append(touchPoint)
             currentStrokes.append(touchPoint)
-            touchPoint.strokeColor.setFill()
-            DoodleTouchPoint.drawPoint(touchPoint.cgPoint,
-                                       withWidth: touchPoint.strokeWidth,
-                                       inContext: context)
+            if let context = UIGraphicsGetCurrentContext() {
+                touchPoint.draw(inContext: context)
+            }
         }
         
         cachedDrawnPathsImage =  UIGraphicsGetImageFromCurrentImageContext()

@@ -8,7 +8,7 @@
 
 import UIKit
 
-internal class DoodleTextView: UIView {
+public class DoodleTextView: UIView {
     
     /// The label used for displaying text.
     fileprivate(set) lazy var textLabel: UILabel = { [unowned self] in
@@ -106,7 +106,7 @@ internal class DoodleTextView: UIView {
         commonInit()
     }
     
-    required init?(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         commonInit()
     }
@@ -114,7 +114,7 @@ internal class DoodleTextView: UIView {
     
     // MARK: - Layout
     
-    override func layoutSubviews() {
+    override public func layoutSubviews() {
         super.layoutSubviews()
 
         if referenceCenter == .zero {

@@ -85,18 +85,20 @@ internal class DoodleTouchBezier: DoodlePath {
             }
         }
     }
-}
-
-extension DoodleTouchBezier {
-    static func ==(lhs: DoodleTouchBezier, rhs: DoodleTouchBezier) -> Bool {
-        return lhs.timestamp == rhs.timestamp
-            && lhs.startPoint == rhs.startPoint
-            && lhs.endPoint == rhs.endPoint
-            && lhs.controlPoint1 == rhs.controlPoint1
-            && lhs.controlPoint2 == rhs.controlPoint2
-            && lhs.startWidth == rhs.startWidth
-            && lhs.endWidth == rhs.endWidth
-            && lhs.strokeColor == rhs.strokeColor
-            && lhs.isConstantWidth == rhs.isConstantWidth
+    
+    
+    // MARK: - Equality
+    
+    override func equals(_ other: DoodlePath) -> Bool {
+        guard let other = other as? DoodleTouchBezier else { return false }
+        return self.timestamp == other.timestamp
+            && self.startPoint == other.startPoint
+            && self.endPoint == other.endPoint
+            && self.controlPoint1 == other.controlPoint1
+            && self.controlPoint2 == other.controlPoint2
+            && self.startWidth == other.startWidth
+            && self.endWidth == other.endWidth
+            && self.strokeColor == other.strokeColor
+            && self.isConstantWidth == other.isConstantWidth
     }
 }

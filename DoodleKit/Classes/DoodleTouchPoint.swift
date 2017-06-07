@@ -43,16 +43,19 @@ internal class DoodleTouchPoint: DoodlePath {
     // MARK: - DrawablePath
     
     override func draw(inContext context: CGContext) {
+        strokeColor.setFill()
         DoodleTouchPoint.drawPoint(cgPoint, withWidth: strokeWidth, inContext: context)
     }
-}
-
-extension DoodleTouchPoint {
-    static func ==(lhs: DoodleTouchPoint, rhs: DoodleTouchPoint) -> Bool {
-        return lhs.cgPoint.equalTo(rhs.cgPoint)
-            && lhs.timestamp == rhs.timestamp
-            && lhs.strokeColor == rhs.strokeColor
-            && lhs.strokeWidth == rhs.strokeWidth
+    
+    
+    // MARK: - Equality
+    
+    override func equals(_ other: DoodlePath) -> Bool {
+        guard let other = other as? DoodleTouchPoint else { return false }
+        return self.cgPoint.equalTo(other.cgPoint)
+            && self.timestamp == other.timestamp
+            && self.strokeColor == other.strokeColor
+            && self.strokeWidth == other.strokeWidth
     }
 }
 

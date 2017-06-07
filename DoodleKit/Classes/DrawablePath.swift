@@ -10,9 +10,11 @@ import Foundation
 
 internal protocol DrawablePath: Equatable {
     func draw(inContext: CGContext)
+    func equals(_ other: Self) -> Bool
 }
 
 internal class DoodlePath: DrawablePath {
     func draw(inContext: CGContext) { }
-    static func ==(lhs: DoodlePath, rhs: DoodlePath) -> Bool { return true }
+    func equals(_ other: DoodlePath) -> Bool { return true }
+    static func ==(lhs: DoodlePath, rhs: DoodlePath) -> Bool { return lhs.equals(rhs) }
 }

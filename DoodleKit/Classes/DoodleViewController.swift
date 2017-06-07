@@ -139,7 +139,7 @@ public class DoodleViewController: UIViewController {
     }()
     
     // Text subviews
-    fileprivate lazy var textView: DoodleTextView = { [unowned self] in
+    public fileprivate(set) lazy var textView: DoodleTextView = { [unowned self] in
         let tv = DoodleTextView()
         tv.translatesAutoresizingMaskIntoConstraints = false
         tv.font = self.font
@@ -184,6 +184,19 @@ public class DoodleViewController: UIViewController {
     }
     
     
+    // MARK: - Init
+    
+    public override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        addGestureRecognizers()
+    }
+    
+    public required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        addGestureRecognizers()
+    }
+    
+    
     // MARK: - View lifecycle
     
     override public func viewDidLoad() {
@@ -203,8 +216,6 @@ public class DoodleViewController: UIViewController {
         
         self.view.addSubview(textEditView)
         textEditView.pinEdgesToSuperview()
-        
-        addGestureRecognizers()
     }
     
     
