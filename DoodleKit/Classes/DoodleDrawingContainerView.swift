@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol DoodleDrawingContainerViewDelegate: class {
+protocol DoodleDrawingContainerViewDelegate: AnyObject {
     /// Tells the delegate to handle a touchesBegan event.
     ///
     /// - Parameter point: The point in this view's coordinate system where the touch began.

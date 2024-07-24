@@ -54,7 +54,7 @@ internal extension UIView {
             attribute: .centerX,
             relatedBy: .equal,
             toItem: view,
-            attribute: NSLayoutAttribute.centerX,
+            attribute: .centerX,
             multiplier: 1,
             constant: offset)
         self.superview?.addConstraint(c)
@@ -84,7 +84,7 @@ internal extension UIView {
             attribute: .centerX,
             relatedBy: .equal,
             toItem: self.superview,
-            attribute: NSLayoutAttribute.centerX,
+            attribute: .centerX,
             multiplier: 1,
             constant: offset)
         self.superview?.addConstraint(c)
@@ -115,7 +115,7 @@ internal extension UIView {
     }
     
     @discardableResult
-    func addFixedWidthConstraint(_ width: CGFloat, priority: UILayoutPriority = UILayoutPriorityRequired) -> NSLayoutConstraint {
+    func addFixedWidthConstraint(_ width: CGFloat, priority: UILayoutPriority = .required) -> NSLayoutConstraint {
         let c = NSLayoutConstraint(
             item: self,
             attribute: .width,
@@ -171,7 +171,7 @@ internal extension UIView {
     }
     
     @discardableResult
-    func pinTopToSuperview(_ padding: CGFloat = 0, priority: UILayoutPriority = UILayoutPriorityRequired) -> NSLayoutConstraint {
+    func pinTopToSuperview(_ padding: CGFloat = 0, priority: UILayoutPriority = .required) -> NSLayoutConstraint {
         let top = NSLayoutConstraint(
             item: self,
             attribute: .top,
@@ -187,7 +187,7 @@ internal extension UIView {
     }
     
     @discardableResult
-    func pinLeftToSuperview(_ padding: CGFloat = 0, priority: UILayoutPriority = UILayoutPriorityRequired) -> NSLayoutConstraint {
+    func pinLeftToSuperview(_ padding: CGFloat = 0, priority: UILayoutPriority = .required) -> NSLayoutConstraint {
         let left = NSLayoutConstraint(
             item: self,
             attribute: .left,
@@ -203,7 +203,7 @@ internal extension UIView {
     }
     
     @discardableResult
-    func pinBottomToSuperview(_ padding: CGFloat = 0, priority: UILayoutPriority = UILayoutPriorityRequired) -> NSLayoutConstraint {
+    func pinBottomToSuperview(_ padding: CGFloat = 0, priority: UILayoutPriority = .required) -> NSLayoutConstraint {
         let bottom = NSLayoutConstraint(
             item: self,
             attribute: .bottom,
@@ -218,7 +218,7 @@ internal extension UIView {
     }
     
     @discardableResult
-    func pinRightToSuperview(_ padding: CGFloat = 0, priority: UILayoutPriority = UILayoutPriorityRequired) -> NSLayoutConstraint {
+    func pinRightToSuperview(_ padding: CGFloat = 0, priority: UILayoutPriority = .required) -> NSLayoutConstraint {
         let right = NSLayoutConstraint(
             item: self,
             attribute: .right,
@@ -234,7 +234,7 @@ internal extension UIView {
     }
     
     @discardableResult
-    func pinRightToViewsLeft(_ view: UIView, padding: CGFloat = 0, priority: UILayoutPriority = UILayoutPriorityRequired) -> NSLayoutConstraint {
+    func pinRightToViewsLeft(_ view: UIView, padding: CGFloat = 0, priority: UILayoutPriority = .required) -> NSLayoutConstraint {
         let right = NSLayoutConstraint(
             item: self,
             attribute: .right,
@@ -305,7 +305,7 @@ internal extension UIView {
     }
     
     @discardableResult
-    func pinLeftToViewsRight(_ view: UIView, padding: CGFloat = 0, priority: UILayoutPriority = UILayoutPriorityRequired) -> NSLayoutConstraint {
+    func pinLeftToViewsRight(_ view: UIView, padding: CGFloat = 0, priority: UILayoutPriority = .required) -> NSLayoutConstraint {
         let left = NSLayoutConstraint(
             item: self,
             attribute: .left,

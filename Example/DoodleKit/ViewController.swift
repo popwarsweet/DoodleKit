@@ -18,11 +18,11 @@ class ViewController: UIViewController {
         doodleView.view.backgroundColor = .gray
 //        doodleView.state = .drawing
         doodleView.textEditingInsets = UIEdgeInsets(top: 20, left: 0, bottom: 20, right: 0)
-        doodleView.willMove(toParentViewController: self)
+        doodleView.willMove(toParent: self)
         doodleView.view.frame = self.view.bounds
         self.view.addSubview(doodleView.view)
-        self.addChildViewController(doodleView)
-        doodleView.didMove(toParentViewController: self)
+        self.addChild(doodleView)
+        doodleView.didMove(toParent: self)
     }
 }
 

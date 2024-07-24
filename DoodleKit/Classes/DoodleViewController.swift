@@ -8,7 +8,7 @@
 
 import UIKit
 
-public protocol DoodleViewControllerDelegate: class {
+public protocol DoodleViewControllerDelegate: AnyObject {
     /// Called whenever the DoodleViewController begins or ends text editing (keyboard entry) mode.
     ///
     /// - Parameters:
@@ -373,6 +373,7 @@ extension DoodleViewController {
 // MARK: - Gesture handling
 
 extension DoodleViewController {
+    @objc
     func handleTap(gesture: UITapGestureRecognizer) {
         // Set to text editing on tap.
         if state != .editingText {
@@ -380,6 +381,7 @@ extension DoodleViewController {
         }
     }
     
+    @objc
     func handlePan(gesture: UIPanGestureRecognizer) {
         textView.handlePan(gesture: gesture)
         
@@ -398,6 +400,7 @@ extension DoodleViewController {
         }
     }
     
+    @objc
     func handlePinchOrRotate(gesture: UIGestureRecognizer) {
         textView.handlePinchOrRotate(gesture: gesture)
     }
@@ -405,6 +408,7 @@ extension DoodleViewController {
 
 
 // MARK: - DoodleDrawingContainerViewDelegate
+
 extension DoodleViewController: DoodleDrawingContainerViewDelegate {
     func doodleDrawingContainerViewTouchBegan(at point: CGPoint) {
         if state == .drawing {
@@ -462,7 +466,7 @@ extension DoodleViewController: DoodleTextEditViewDelegate {
 // MARK: - DoodleViewState
 
 public extension DoodleViewController {
-    public enum DoodleViewState {
+    enum DoodleViewState {
         case `default`
         /// The drawing state, where drawing with touch gestures will create colored lines in the view.
         case drawing

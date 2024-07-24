@@ -8,7 +8,7 @@
 
 import UIKit
 
-internal protocol DoodleTextEditViewDelegate: class {
+internal protocol DoodleTextEditViewDelegate: AnyObject {
     /// Called whenever the DoodleTextEditView ends text editing (keyboard entry) mode.
     ///
     /// - Parameter text: The new text string after editing
@@ -26,12 +26,12 @@ internal class DoodleTextEditView: UIView {
     var isEditing = false {
         didSet { updateIsEditing(isEditing) }
     }
-
+    
     /// The text string the DoodleTextEditView is currently displaying.
     ///
     /// - Note: Set textString in DoodleViewController to control or read this property.
     var textString: String {
-        set { textView.text = textString }
+        set { textView.text = newValue }
         get { return textView.text }
     }
     
@@ -108,7 +108,7 @@ internal class DoodleTextEditView: UIView {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(keyboardFrameDidChange(notification:)),
-            name: .UIKeyboardDidChangeFrame,
+            name: UIResponder.keyboardDidChangeFrameNotification,
             object: nil)
     }
     
@@ -129,26 +129,27 @@ internal class DoodleTextEditView: UIView {
     
     // Notification handling
     
+    @objc
     func keyboardFrameDidChange(notification: Notification) {
         textContainer.layer.removeAllAnimations()
         
-        let keyboardRectEnd = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue ?? .zero
-        let duration: Double = (notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue ?? 0
-        var animationCurve = UIViewAnimationCurve.linear
-        if let index = (notification.userInfo?[UIKeyboardAnimationCurveUserInfoKey] as? NSNumber)?.intValue,
-            let value = UIViewAnimationCurve(rawValue:index) {
+        let keyboardRectEnd = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue ?? .zero
+        let duration: Double = (notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue ?? 0
+        var animationCurve: UIView.AnimationCurve = .linear
+        if let index = (notification.userInfo?[UIResponder.keyboardAnimationCurveUserInfoKey] as? NSNumber)?.intValue,
+           let value = UIView.AnimationCurve(rawValue:index) {
             animationCurve = value
         }
         
         textContainerBottomConstraint?.constant = -keyboardRectEnd.height
-
+        
         UIView.animate(
             withDuration: duration,
             delay: 0,
-            options: [UIViewAnimationOptions(rawValue: UInt(animationCurve.rawValue))],
+            options: [UIView.AnimationOptions(rawValue: UInt(animationCurve.rawValue))],
             animations: {
                 self.textContainer.layoutIfNeeded()
-        }, completion: nil)
+            }, completion: nil)
     }
     
     // Property updates
@@ -205,7 +206,7 @@ extension DoodleTextEditView: UITextViewDelegate {
         if (textView.text as NSString).length + ((text as NSString).length - range.length) > 70 {
             return false
         }
-
+        
         if (text as NSString).rangeOfCharacter(from: CharacterSet.newlines).location != NSNotFound {
             return false
         }
