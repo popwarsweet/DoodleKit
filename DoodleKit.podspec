@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'DoodleKit'
-  s.version          = '0.1.1'
+  s.version          = '1.0.1'
   s.summary          = 'A drop in view controller for doodling.'
 
 # This description is used to generate tags and improve search results.
@@ -28,7 +28,7 @@ A view controller for handling drawing and a text label overlay.
   s.source           = { :git => 'https://github.com/popwarsweet/DoodleKit.git', :tag => s.version.to_s }
   s.social_media_url = 'https://twitter.com/KyleZaragoza'
 
-  s.ios.deployment_target = '8.0'
+  s.ios.deployment_target = '12.0'
 
   s.source_files = 'DoodleKit/Classes/**/*'
   
